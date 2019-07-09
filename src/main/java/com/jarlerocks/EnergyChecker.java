@@ -1,3 +1,5 @@
+package com.jarlerocks;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -10,7 +12,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class EnergyChecker {
-    public static void main(String[] args) throws Exception {
+    public static JSONObject getHome() throws Exception {
 
        /*
        Use Tibber API to get power data.
@@ -40,7 +42,6 @@ public class EnergyChecker {
         }
 
         // Receive
-        InputStream is;
         String response;
         if (con.getResponseCode() >= 400) {
             String error = readStream(con.getErrorStream());
@@ -53,9 +54,7 @@ public class EnergyChecker {
         JSONObject data = jsonObject.getJSONObject("data");
         JSONObject viewer = data.getJSONObject("viewer");
         JSONArray homes = viewer.getJSONArray("homes");
-        JSONObject home = homes.getJSONObject(0);
-        System.out.println(home);
-        //JSONObject currentSubscription = jsonObject.getJSONObject("currentSubscription");
+        return homes.getJSONObject(0);
     }
 
     private static String readStream(InputStream is) throws Exception {
