@@ -6,10 +6,6 @@ version '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
 
-task Run(type: JavaExec) {
-    classpath sourceSets.main.runtimeClasspath
-    main = "EnergyChecker"
-}
 repositories {
     mavenCentral()
 }
