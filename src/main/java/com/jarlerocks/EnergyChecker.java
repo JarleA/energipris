@@ -7,6 +7,8 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -73,7 +75,7 @@ public class EnergyChecker {
         //sort the prices
         // get best prices
         JSONObject response = requestTibbers("Bearer d1007ead2dc84a2b82f0de19451c5fb22112f7ae11d19bf2bedb224a003ff74a",
-                "{viewer{homes{consumption(resolution:HOURLY,last:10){nodes{from to cost unitPrice unitPriceVAT consumption consumptionUnit}}}}}");
+                "{viewer{homes{consumption(resolution:HOURLY,last:24){nodes{from to cost unitPrice unitPriceVAT consumption consumptionUnit}}}}}");
 
 
         // int i = 1;
@@ -89,16 +91,20 @@ public class EnergyChecker {
         JSONObject consumption = home.getJSONObject("consumption");
         JSONArray nodes = consumption.getJSONArray("nodes");
 
-        PricePoint[] lowestPrices = new PricePoint[count];
+
+        PricePoint[] pricePoints = new PricePoint[nodes.length()];
+
         for(int i = 0; i < nodes.length(); i++) {
             JSONObject node = nodes.getJSONObject(i);
-            System.out.println(node.getFloat("unitPrice"));
+            String time =(node.getString("from"));
+            float price =  (node.getFloat("unitPrice"));
+            PricePoint pricepoint = new PricePoint(time,price);
 
+            pricePoints[i] = pricepoint;
         }
 
-
-        return lowestPrices;
-
+        Arrays.sort(pricePoints);
+        return Arrays.copyOfRange(pricePoints, 0, count);
     }
 
     private static String readStream(InputStream is) throws Exception {
